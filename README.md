@@ -79,11 +79,12 @@ python display_text.py "HELLO\\nWORLD" --color "#FF0066" --background "#000000" 
 
 ### Stylised clock
 ```bash
-python clock_display.py --interval 5.0
+python clock_display.py --theme dark --interval 5.0
 ```
-- `--color` primary time color.
-- `--accent` highlight color for the colon and gradient.
-- `--background` base gradient color.
+- `--theme` palette preset (`dark` default, `neon`, `warm`).
+- `--color` primary time color override.
+- `--accent` highlight color override for the colon and gradient.
+- `--background` base gradient override.
 - `--font` optional TrueType font path.
 - `--size` font size when using a TrueType font.
 - `--interval` refresh cadence in seconds.

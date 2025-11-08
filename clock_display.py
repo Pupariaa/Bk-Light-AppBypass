@@ -9,7 +9,9 @@ from PIL import Image, ImageDraw, ImageFont
 from display_session import BleDisplaySession
 
 
-def parse_color(value: str) -> tuple[int, int, int]:
+def parse_color(value: Optional[str]) -> Optional[tuple[int, int, int]]:
+    if value is None:
+        return None
     cleaned = value.replace("#", "").replace(" ", "")
     if "," in cleaned:
         parts = cleaned.split(",")
@@ -54,17 +56,17 @@ def build_clock_png(now: datetime, color: tuple[int, int, int], accent: tuple[in
     height = bbox[3] - bbox[1]
     origin_x = (32 - width) / 2 - bbox[0]
     origin_y = (32 - height) / 2 - bbox[1]
-    shadow_color = tuple(max(0, channel - 40) for channel in color)
-    draw.text((origin_x + 1, origin_y + 1), text, fill=shadow_color, font=font)
-    draw.text((origin_x, origin_y), text, fill=color, font=font)
+    light_color = tuple(min(255, int(channel * 1.1)) for channel in color)
+    draw.text((origin_x, origin_y), text, fill=light_color, font=font)
     left_width = draw.textlength(text[:2], font=font)
     colon_width = draw.textlength(":", font=font)
-    colon_x = origin_x + left_width + colon_width / 2
+    spacing = max(1.0, size * 0.06)
+    colon_x = origin_x + left_width + colon_width / 2 + spacing
     digit_bbox = draw.textbbox((0, 0), "0", font=font)
     digit_height = digit_bbox[3] - digit_bbox[1]
     baseline = origin_y + digit_bbox[1] + digit_height / 2
-    gap = digit_height * 0.28
-    dot_radius = max(1.5, digit_height * 0.12)
+    gap = digit_height * 0.32
+    dot_radius = max(1.2, digit_height * 0.1)
     top_y = baseline - gap
     bottom_y = baseline + gap
     draw.ellipse((colon_x - dot_radius, top_y - dot_radius, colon_x + dot_radius, top_y + dot_radius), fill=accent)
@@ -84,8 +86,35 @@ def resolve_timezone(tz_name: Optional[str]) -> timezone:
         return datetime.now().astimezone().tzinfo or timezone.utc
 
 
-async def run_clock(address: Optional[str], color: tuple[int, int, int], accent: tuple[int, int, int], background: tuple[int, int, int], font_path: Optional[Path], size: int, interval: float, tz_name: Optional[str]) -> None:
+def resolve_palette(theme: str, color: Optional[tuple[int, int, int]], accent: Optional[tuple[int, int, int]], background: Optional[tuple[int, int, int]]) -> tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]]:
+    palettes = {
+        "dark": (
+            (226, 232, 255),   # text
+            (110, 125, 255),   # accent
+            (7, 9, 18),        # background base
+        ),
+        "neon": (
+            (240, 255, 255),
+            (0, 255, 180),
+            (5, 10, 18),
+        ),
+        "warm": (
+            (255, 244, 230),
+            (255, 153, 102),
+            (12, 6, 2),
+        ),
+    }
+    default_color, default_accent, default_background = palettes.get(theme, palettes["dark"])
+    return (
+        color or default_color,
+        accent or default_accent,
+        background or default_background,
+    )
+
+
+async def run_clock(address: Optional[str], color: Optional[tuple[int, int, int]], accent: Optional[tuple[int, int, int]], background: Optional[tuple[int, int, int]], font_path: Optional[Path], size: int, interval: float, tz_name: Optional[str], theme: str) -> None:
     tz = resolve_timezone(tz_name)
+    resolved_color, resolved_accent, resolved_background = resolve_palette(theme, color, accent, background)
     previous = ""
     try:
         async with BleDisplaySession(address) as session:
@@ -93,7 +122,7 @@ async def run_clock(address: Optional[str], color: tuple[int, int, int], accent:
                 now = datetime.now(tz)
                 stamp = now.strftime("%H:%M")
                 if stamp != previous:
-                    png_bytes = build_clock_png(now, color, accent, background, font_path, size)
+                    png_bytes = build_clock_png(now, resolved_color, resolved_accent, resolved_background, font_path, size)
                     await session.send_png(png_bytes)
                     previous = stamp
                 await asyncio.sleep(interval)
@@ -104,13 +133,14 @@ async def run_clock(address: Optional[str], color: tuple[int, int, int], accent:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--address")
-    parser.add_argument("--color", default="#FFFFFF")
-    parser.add_argument("--accent", default="#FF2C75")
-    parser.add_argument("--background", default="#120510")
+    parser.add_argument("--color")
+    parser.add_argument("--accent")
+    parser.add_argument("--background")
     parser.add_argument("--font", type=Path)
     parser.add_argument("--size", type=int, default=20)
     parser.add_argument("--interval", type=float, default=5.0)
     parser.add_argument("--timezone")
+    parser.add_argument("--theme", choices=("dark", "neon", "warm"), default="dark")
     return parser.parse_args()
 
 
@@ -126,6 +156,7 @@ if __name__ == "__main__":
             args.size,
             args.interval,
             args.timezone,
+            args.theme,
         )
     )
 
