@@ -87,7 +87,19 @@ The tools assume the screen advertises as `LED_BLE_*` (BK-Light firmware). Updat
 
 ## Toolkit Scripts
 - `scripts/clock_display.py` – async HH:MM clock (supports 12/24h, dot flashing, themes). Quittez avec `Ctrl+C` : la session BLE est fermée proprement, vous pouvez relancer immédiatement.
-- `scripts/display_text.py` – renders text using presets (colour/background/font/spacing).
+- `scripts/display_text.py` – renders text using presets (colour/background/font/spacing) or marquee scrolls.
+  - Example scrolling preset in `config.yaml`:
+    ```yaml
+    text:
+      marquee_left:
+        mode: scroll
+        direction: left
+        speed: 30.0      # pixels per second
+        gap: 32          # space between repetitions
+        offset_y: 0      # vertical tweak in pixels
+        interval: 0.04   # frame interval (seconds)
+    ```
+  - Launch: `python scripts/display_text.py "HELLO" --preset marquee_left`
 - `scripts/send_image.py` – uploads any image with fit/cover/scale + rotate/mirror/invert.
 - `scripts/increment_counter.py` – numeric animation for diagnostics.
 - `scripts/identify_panels.py` – flashes digits on each configured panel.

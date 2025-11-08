@@ -47,6 +47,13 @@ class TextPreset:
     font: Optional[str] = None
     size: int = 16
     spacing: int = 1
+    mode: str = "static"
+    direction: str = "left"
+    speed: float = 24.0
+    gap: int = 32
+    offset_x: int = 0
+    offset_y: int = 0
+    interval: float = 0.05
 
 
 @dataclass
@@ -170,6 +177,13 @@ DEFAULTS: Dict[str, Any] = {
                 "font": None,
                 "size": 16,
                 "spacing": 1,
+                "mode": "static",
+                "direction": "left",
+                "speed": 24.0,
+                "gap": 32,
+                "offset_x": 0,
+                "offset_y": 0,
+                "interval": 0.05,
             }
         },
         "image": {
@@ -215,7 +229,17 @@ def _build_clock_presets(data: Dict[str, Dict[str, Any]]) -> Dict[str, ClockPres
 def _build_text_presets(data: Dict[str, Dict[str, Any]]) -> Dict[str, TextPreset]:
     presets: Dict[str, TextPreset] = {}
     for name, values in data.items():
-        presets[name] = TextPreset(**values)
+        preset = TextPreset(**values)
+        if preset.mode not in {"static", "scroll"}:
+            preset.mode = "static"
+        if preset.direction not in {"left", "right"}:
+            preset.direction = "left"
+        preset.speed = max(1.0, float(preset.speed))
+        preset.gap = max(0, int(preset.gap))
+        preset.offset_x = int(preset.offset_x)
+        preset.offset_y = int(preset.offset_y)
+        preset.interval = max(0.01, float(preset.interval))
+        presets[name] = preset
     if "default" not in presets:
         presets["default"] = TextPreset()
     return presets
@@ -359,9 +383,23 @@ def text_options(config: AppConfig, preset_name: str, overrides: Dict[str, Any])
     base = library.get(preset_name) or library.get(config.runtime.preset) or library.get("default") or TextPreset()
     data = dict(base.__dict__)
     for key, value in overrides.items():
-        if value is not None and key in data:
+        if value is None or key not in data:
+            continue
+        if key in {"size", "spacing", "gap", "offset_x", "offset_y"}:
+            data[key] = int(value)
+        elif key in {"speed", "interval"}:
+            data[key] = float(value)
+        else:
             data[key] = value
-    return TextPreset(**data)
+    preset = TextPreset(**data)
+    if preset.mode not in {"static", "scroll"}:
+        preset.mode = "static"
+    if preset.direction not in {"left", "right"}:
+        preset.direction = "left"
+    preset.speed = max(1.0, float(preset.speed))
+    preset.gap = max(0, int(preset.gap))
+    preset.interval = max(0.01, float(preset.interval))
+    return preset
 
 
 def image_options(config: AppConfig, preset_name: str, overrides: Dict[str, Any]) -> ImagePreset:

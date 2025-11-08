@@ -21,6 +21,10 @@ display:
   max_retries: 3
   log_notifications: true
 
+runtime:
+  mode: clock
+  preset: default
+
 presets:
   clock:
     default:
@@ -39,8 +43,37 @@ presets:
       color: "#FF0000"
       background: "#000000"
       font: null
-      size: 16
+      size: 18
       spacing: 1
+      mode: static
+      direction: left
+      speed: 24.0
+      gap: 32
+      offset_x: 0
+      offset_y: 0
+      interval: 0.05
+    marquee_left:
+      color: "#00FFAA"
+      background: "#000000"
+      mode: scroll
+      direction: left
+      speed: 30.0
+      gap: 32
+      size: 18
+      spacing: 2
+      offset_y: 0
+      interval: 0.04
+    marquee_right:
+      color: "#FFFFFF"
+      background: "#000000"
+      mode: scroll
+      direction: right
+      speed: 20.0
+      gap: 48
+      size: 20
+      spacing: 1
+      offset_y: -2
+      interval: 0.05
   image:
     default:
       mode: fit
@@ -53,7 +86,4 @@ presets:
       count: 10
       delay: 1.0
 
-runtime:
-  mode: clock
-  preset: default
 
