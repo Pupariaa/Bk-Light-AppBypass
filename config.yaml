@@ -62,8 +62,8 @@ presets:
       background: "#000000"
       mode: scroll
       direction: left
-      speed: 30.0
-      step: 3
+      speed: 100.0
+      step: 1
       gap: 32
       size: 18
       spacing: 2

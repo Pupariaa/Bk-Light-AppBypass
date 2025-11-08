@@ -128,14 +128,14 @@ The tools assume the screen advertises as `LED_BLE_*` (BK-Light firmware). Updat
    python scripts/identify_panels.py
    ```
 
-   (Chaque panneau affiche un numéro puis se déconnecte proprement.)
+   (Each panel displays its index and then disconnects cleanly.)
 
 ## Toolkit Scripts
 
-- `scripts/clock_display.py` – async HH:MM clock (supports 12/24h, dot flashing, themes). Quittez avec `Ctrl+C` : la session BLE est fermée proprement, vous pouvez relancer immédiatement.
+- `scripts/clock_display.py` – async HH:MM clock (supports 12/24h, dot flashing, themes). Exit with `Ctrl+C` so the BLE session closes cleanly and you can relaunch immediately.
 - `scripts/display_text.py` – renders text using presets (colour/background/font/spacing) or marquee scrolls.
 
-  Exemple de preset scroll dans `config.yaml` :
+  Example scroll preset in `config.yaml`:
 
   ```yaml
   text:
@@ -151,7 +151,7 @@ The tools assume the screen advertises as `LED_BLE_*` (BK-Light firmware). Updat
       interval: 0.04
   ```
 
-  Lancement :
+  Launch:
 
   ```bash
   python scripts/display_text.py "HELLO" --preset marquee_left
@@ -172,7 +172,7 @@ async with PanelManager(load_config()) as manager:
     await manager.send_image(image)
 ```
 
-`PanelManager` slices the image per tile and `BleDisplaySession` handles BLE writes/ACKs for each panel automatically. Sessions se reconnectent automatiquement en cas de redémarrage du panneau (retries via `reconnect_delay` / `max_retries` / `scan_timeout`).
+`PanelManager` slices the image per tile and `BleDisplaySession` handles BLE writes/ACKs for each panel automatically. Sessions will auto-reconnect if a panel restarts (tunable via `reconnect_delay` / `max_retries` / `scan_timeout`).
 
 ## Attribution & License
 
