@@ -4,13 +4,13 @@ from pathlib import Path
 from typing import List
 from bleak import BleakScanner
 from PIL import Image, ImageOps
-from display_session import BleDisplaySession
+from bk_light.display_session import BleDisplaySession
 
 PREFIXES = ("LED_BLE_", "BK_LIGHT", "BJ_LED")
 
 
 def build_logo_png() -> bytes:
-    asset_path = Path(__file__).resolve().parent / "assets" / "bklight-boot.png"
+    asset_path = Path(__file__).resolve().parents[1] / "assets" / "bklight-boot.png"
     image = Image.open(asset_path).convert("RGB")
     fitted = ImageOps.fit(image, (32, 32), method=Image.Resampling.LANCZOS)
     buffer = BytesIO()

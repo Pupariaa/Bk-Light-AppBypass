@@ -5,8 +5,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 from PIL import Image, ImageDraw, ImageFont
-from config import AppConfig, clock_options, load_config
-from panel_manager import PanelManager
+from bk_light.config import AppConfig, clock_options, load_config
+from bk_light.panel_manager import PanelManager
 
 
 def parse_color(value: Optional[str]) -> Optional[tuple[int, int, int]]:

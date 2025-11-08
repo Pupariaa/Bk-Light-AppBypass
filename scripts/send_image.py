@@ -4,8 +4,8 @@ from dataclasses import replace
 from pathlib import Path
 from typing import Optional
 from PIL import Image, ImageOps
-from config import AppConfig, image_options, load_config
-from panel_manager import PanelManager
+from bk_light.config import AppConfig, image_options, load_config
+from bk_light.panel_manager import PanelManager
 
 
 def parse_bool(value: Optional[bool]) -> Optional[bool]:

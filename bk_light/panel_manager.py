@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from io import BytesIO
 from typing import List, Optional
 from PIL import Image
-from config import AppConfig, PanelDescriptor
-from display_session import BleDisplaySession
+from .config import AppConfig, PanelDescriptor
+from .display_session import BleDisplaySession
 
 
 @dataclass

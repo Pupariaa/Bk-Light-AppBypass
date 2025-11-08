@@ -7,7 +7,7 @@ from clock_display import run_clock
 from display_text import display_text
 from increment_counter import run_counter
 from send_image import send_image
-from config import AppConfig, load_config
+from bk_light.config import AppConfig, load_config
 
 
 def parse_cli_value(value: str):

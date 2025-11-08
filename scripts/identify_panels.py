@@ -5,8 +5,8 @@ from io import BytesIO
 from pathlib import Path
 from typing import Optional
 from PIL import Image, ImageDraw, ImageFont
-from config import AppConfig, PanelDescriptor, load_config
-from display_session import BleDisplaySession
+from bk_light.config import AppConfig, PanelDescriptor, load_config
+from bk_light.display_session import BleDisplaySession
 
 
 def build_panel_image(

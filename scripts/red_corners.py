@@ -2,7 +2,7 @@ import argparse
 import asyncio
 from io import BytesIO
 from PIL import Image
-from display_session import BleDisplaySession
+from bk_light.display_session import BleDisplaySession
 
 
 def build_png() -> bytes:

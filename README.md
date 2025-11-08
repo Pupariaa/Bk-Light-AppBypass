@@ -73,23 +73,23 @@ The tools assume the screen advertises as `LED_BLE_*` (BK-Light firmware). Updat
    ```
 4. Launch the production entrypoint:
    ```bash
-   python production.py
+   python scripts/production.py
    ```
    Override anything ad hoc:
    ```bash
-   python production.py --mode text --text "HELLO" --option color=#00FFAA
+   python scripts/production.py --mode text --text "HELLO" --option color=#00FFAA
    ```
 5. Need to identify MAC ↔ panel placement? Run:
    ```bash
-   python identify_panels.py
+   python scripts/identify_panels.py
    ```
 
 ## Toolkit Scripts
-- `clock_display.py` – async HH:MM clock (supports 12/24h, dot flashing, themes).
-- `display_text.py` – renders text using presets (colour/background/font/spacing).
-- `send_image.py` – uploads any image with fit/cover/scale + rotate/mirror/invert.
-- `increment_counter.py` – numeric animation for diagnostics.
-- `identify_panels.py` – flashes digits on each configured panel.
+- `scripts/clock_display.py` – async HH:MM clock (supports 12/24h, dot flashing, themes).
+- `scripts/display_text.py` – renders text using presets (colour/background/font/spacing).
+- `scripts/send_image.py` – uploads any image with fit/cover/scale + rotate/mirror/invert.
+- `scripts/increment_counter.py` – numeric animation for diagnostics.
+- `scripts/identify_panels.py` – flashes digits on each configured panel.
 
 Each script honours `--config`, `--address`, and preset overrides so you can reuse the same YAML in development or production.
 
