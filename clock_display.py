@@ -30,24 +30,12 @@ def load_font(path: Optional[Path], size: int) -> ImageFont.ImageFont:
         return ImageFont.load_default()
 
 
-def build_background(background: tuple[int, int, int], accent: tuple[int, int, int]) -> Image.Image:
-    image = Image.new("RGB", (32, 32), background)
-    pixels = image.load()
-    center = (15.5, 15.5)
-    max_distance = math.sqrt(15.5 ** 2 * 2)
-    for y in range(32):
-        for x in range(32):
-            distance = math.dist((x, y), center) / max_distance
-            mix = max(0.0, min(1.0, distance))
-            r = int(background[0] * (1 - mix) + accent[0] * mix)
-            g = int(background[1] * (1 - mix) + accent[1] * mix)
-            b = int(background[2] * (1 - mix) + accent[2] * mix)
-            pixels[x, y] = (r, g, b)
-    return image
+def build_background(background: tuple[int, int, int]) -> Image.Image:
+    return Image.new("RGB", (32, 32), background)
 
 
 def build_clock_png(now: datetime, color: tuple[int, int, int], accent: tuple[int, int, int], background: tuple[int, int, int], font_path: Optional[Path], size: int) -> bytes:
-    base = build_background(background, accent)
+    base = build_background(background)
     draw = ImageDraw.Draw(base)
     font = load_font(font_path, size)
     text = now.strftime("%H:%M")
