@@ -52,15 +52,23 @@ def build_clock_png(now: datetime, color: tuple[int, int, int], accent: tuple[in
     bbox = draw.textbbox((0, 0), text, font=font)
     width = bbox[2] - bbox[0]
     height = bbox[3] - bbox[1]
-    origin = ((32 - width) / 2, (32 - height) / 2)
+    origin_x = (32 - width) / 2 - bbox[0]
+    origin_y = (32 - height) / 2 - bbox[1]
     shadow_color = tuple(max(0, channel - 40) for channel in color)
-    draw.text((origin[0] + 1, origin[1] + 1), text, fill=shadow_color, font=font)
-    draw.text(origin, text, fill=color, font=font)
-    colon_x = origin[0] + width / 2
-    top_y = origin[1] + height * 0.2
-    bottom_y = origin[1] + height * 0.75
-    draw.ellipse((colon_x - 1.5, top_y - 1.5, colon_x + 1.5, top_y + 1.5), fill=accent)
-    draw.ellipse((colon_x - 1.5, bottom_y - 1.5, colon_x + 1.5, bottom_y + 1.5), fill=accent)
+    draw.text((origin_x + 1, origin_y + 1), text, fill=shadow_color, font=font)
+    draw.text((origin_x, origin_y), text, fill=color, font=font)
+    left_width = draw.textlength(text[:2], font=font)
+    colon_width = draw.textlength(":", font=font)
+    colon_x = origin_x + left_width + colon_width / 2
+    digit_bbox = draw.textbbox((0, 0), "0", font=font)
+    digit_height = digit_bbox[3] - digit_bbox[1]
+    baseline = origin_y + digit_bbox[1] + digit_height / 2
+    gap = digit_height * 0.28
+    dot_radius = max(1.5, digit_height * 0.12)
+    top_y = baseline - gap
+    bottom_y = baseline + gap
+    draw.ellipse((colon_x - dot_radius, top_y - dot_radius, colon_x + dot_radius, top_y + dot_radius), fill=accent)
+    draw.ellipse((colon_x - dot_radius, bottom_y - dot_radius, colon_x + dot_radius, bottom_y + dot_radius), fill=accent)
     buffer = BytesIO()
     base.save(buffer, format="PNG", optimize=False)
     return buffer.getvalue()
