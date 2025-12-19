@@ -13,7 +13,9 @@ UUID_NOTIFY = "0000fa03-0000-1000-8000-00805f9b34fb"
 HANDSHAKE_FIRST = bytes.fromhex("08 00 01 80 0E 06 32 00")
 HANDSHAKE_SECOND = bytes.fromhex("04 00 05 80")
 ACK_STAGE_ONE = bytes.fromhex("0C 00 01 80 81 06 32 00 00 01 00 01")
+ACK_STAGE_ONE_ALT = bytes.fromhex("0B 00 01 80 83 06 32 00 00 01 00")  # ACT1025 64x16 variant
 ACK_STAGE_TWO = bytes.fromhex("08 00 05 80 0B 03 07 02")
+ACK_STAGE_TWO_ALT = bytes.fromhex("08 00 05 80 0E 03 07 01")  # ACT1025 64x16 variant
 ACK_STAGE_THREE = bytes.fromhex("05 00 02 00 03")
 FRAME_VALIDATION = bytes.fromhex("05 00 00 01 00")
 
@@ -65,9 +67,9 @@ class AckWatcher:
         payload = bytes(data)
         if self.verbose:
             print("NOTIF", bytes_to_hex(payload))
-        if payload == ACK_STAGE_ONE:
+        if payload == ACK_STAGE_ONE or payload == ACK_STAGE_ONE_ALT:
             self.stage_one.set()
-        elif payload == ACK_STAGE_TWO:
+        elif payload == ACK_STAGE_TWO or payload == ACK_STAGE_TWO_ALT:
             self.stage_two.set()
         elif payload == ACK_STAGE_THREE:
             self.stage_three.set()
