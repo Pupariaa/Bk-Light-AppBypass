@@ -43,6 +43,16 @@ The tools assume the screen advertises as `LED_BLE_*` (BK-Light firmware). Updat
 
 2. Edit `config.yaml`.
 
+   If you don’t know your panel’s BLE MAC on macOS, discover it first:
+
+   ```bash
+   python scripts/scan_macos.py
+   ```
+
+   The scanner lists devices advertising as `LED_BLE_*`; copy the address into `config.yaml` (or set `BK_LIGHT_ADDRESS`).
+
+   macOS note: CoreBluetooth/bleak cannot initiate a connection by MAC address. Use macOS only to discover the address, then run the actual connection/production scripts from Linux or Windows where MAC-based connects are supported.
+
    - Single panel:
 
      ```yaml
@@ -51,7 +61,7 @@ The tools assume the screen advertises as `LED_BLE_*` (BK-Light firmware). Updat
      panels:
        list: ["F0:27:3C:1A:8B:C3"]
      display:
-       antialias_text: true  # set to false for crisp bitmap text
+       antialias_text: true # set to false for crisp bitmap text
      ```
 
    - Fonts:
@@ -62,7 +72,7 @@ The tools assume the screen advertises as `LED_BLE_*` (BK-Light firmware). Updat
      presets:
        clock:
          default:
-           font: "Aldo PC"     # resolves to assets/fonts/Aldo PC.ttf
+           font: "Aldo PC" # resolves to assets/fonts/Aldo PC.ttf
            size: 22
      ```
 
@@ -157,7 +167,7 @@ The tools assume the screen advertises as `LED_BLE_*` (BK-Light firmware). Updat
       mode: scroll
       direction: left
       speed: 30.0
-      step: 3          # pixels moved per frame
+      step: 3 # pixels moved per frame
       gap: 32
       size: 18
       spacing: 2
@@ -175,8 +185,10 @@ The tools assume the screen advertises as `LED_BLE_*` (BK-Light firmware). Updat
 - `scripts/increment_counter.py` – numeric animation for diagnostics.
 - `scripts/identify_panels.py` – flashes digits on each configured panel.
 - `scripts/list_fonts.py`
+- `scripts/scan_macos.py` – macOS helper that scans for BLE devices named `LED_BLE_*` and prints their MAC addresses so you can populate `config.yaml` or `BK_LIGHT_ADDRESS`. macOS cannot connect by MAC (CoreBluetooth limitation), so use the discovered address from Linux/Windows when running the other scripts.
 
   Prints the fonts resolved from `assets/fonts/`. Bundled names and defaults:
+
   - `Aldo PC`
   - `Dolce Vita Light`
   - `Kenyan Coffee Rg`
@@ -201,7 +213,7 @@ async with PanelManager(load_config()) as manager:
 
 ## Attribution & License
 
-- Created by Puparia — GitHub: [Pupariaa](<https://github.com/Pupariaa>).
+- Created by Puparia — GitHub: [Pupariaa](https://github.com/Pupariaa).
 - Code is open-source and contributions are welcome; open a pull request with improvements or new effects.
 - If you reuse this toolkit (or derivatives) in your own projects, credit “Puparia / <https://github.com/Pupariaa>” and link back to the original repository.
 - Licensed under the [MIT License](./LICENSE).
